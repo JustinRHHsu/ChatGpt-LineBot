@@ -16,7 +16,7 @@ chatgpt = ChatGPT()
 # domain root
 @app.route('/')
 def home():
-    return 'Hello, World!'
+    return 'Hello, Justin!'
 
 @app.route("/webhook", methods=['POST'])
 def callback():

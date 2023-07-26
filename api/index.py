@@ -107,6 +107,7 @@ def handle_message(event):
             TextSendMessage(text="感謝您的使用，若需要我的服務，請跟我說 「啟動」 謝謝~"))
         return
     
+    ## 可以下關鍵字查詢目前的用量
     ## if message is "目前用量" then reply with the usage
     if event.message.text == "目前用量":
         working_status = False

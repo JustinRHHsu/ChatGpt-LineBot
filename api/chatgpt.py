@@ -66,6 +66,7 @@ class ChatGPT:
 
         return response['choices'][0]['text'].strip()
 
+    ## 查詢 OpenAI API 的使用量
     def add_msg(self, text):
         self.prompt.add_msg(text)
 

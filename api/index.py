@@ -129,7 +129,8 @@ def handle_message(event):
         reply_msg = chatgpt.get_response().replace("AI:", "", 1)
         print("ChatGPT API 回應(取代部份字串)：" + reply_msg)
         chatgpt.add_msg(f"AI:{reply_msg}\n")
-        print("在 Prompt 再加入這一次 AI 回應的消息，完整訊息為：" + chatgpt.prompt.generate_prompt())
+        print("在 Prompt 再加入這一次 AI 回應的消息，完整訊息為：" + "\n" + chatgpt.prompt.generate_prompt())
+        
         ## 回傳給使用者的訊息
         line_bot_api.reply_message(
             event.reply_token,

@@ -5,6 +5,8 @@ import os
 import openai
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+## declar a global variable that will store usage of open api, default is 0
+usage = 0
 
 # ChatGPT 的 class 有三個 method，分別是 __init__、get_response、add_msg
 # __init__ 是初始化，會設定一些參數，例如 model、temperature、frequency_penalty、presence_penalty、max_tokens
@@ -44,6 +46,7 @@ class ChatGPT:
     ## .strip() 是將字串前後的空白符號去除
 
     def get_response(self):
+        global usage
         response = openai.Completion.create(
             model=self.model,
             prompt=self.prompt.generate_prompt(),
@@ -52,7 +55,25 @@ class ChatGPT:
             presence_penalty=self.presence_penalty,
             max_tokens=self.max_tokens
         )
+        
+        ## print out prompt_tokens, completion_tokens and total_tokens
+        print("prompt_tokens: " + str(response['usage']['prompt_tokens']))
+        print("completion_tokens: " + str(response['usage']['completion_tokens']))
+        print("total_tokens: " + str(response['usage']['total']))
+        ## then retrieve total_tokens and store into the global variable usage
+        usage = response['usage']['total']
+        print("OpenAI API usage: " + str(usage))
+
         return response['choices'][0]['text'].strip()
 
     def add_msg(self, text):
         self.prompt.add_msg(text)
+
+
+    ## write a function that to query the latest usage of openai api
+    ## https://beta.openai.com/docs/api-reference/retrieve-engine
+    ## https://beta.openai.com/docs/api-reference/retrieve-completion
+    def get_usage(self):
+        global usage
+        return usage
+    

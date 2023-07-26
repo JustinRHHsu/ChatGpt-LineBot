@@ -59,9 +59,10 @@ class ChatGPT:
         ## print out prompt_tokens, completion_tokens and total_tokens
         print("prompt_tokens: " + str(response['usage']['prompt_tokens']))
         print("completion_tokens: " + str(response['usage']['completion_tokens']))
-        print("total_tokens: " + str(response['usage']['total']))
+        print("total_tokens: " + str(response['usage']['total_tokens']))
         ## then retrieve total_tokens and store into the global variable usage
-        usage = response['usage']['total']
+
+        usage = response['usage']['total_tokens']
         print("OpenAI API usage: " + str(usage))
 
         return response['choices'][0]['text'].strip()

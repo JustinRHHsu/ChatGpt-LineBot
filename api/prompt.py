@@ -4,7 +4,7 @@ import os
 chat_language = os.getenv("INIT_LANGUAGE", default = "zh")
 
 # Message 最多在 List 中的數量為 20
-MSG_LIST_LIMIT = int(os.getenv("MSG_LIST_LIMIT", default = 20))
+MSG_LIST_LIMIT = int(os.getenv("MSG_LIST_LIMIT", default = 2))
 LANGUAGE_TABLE = {
   "zh": "嗨！",
   "en": "Hi!"

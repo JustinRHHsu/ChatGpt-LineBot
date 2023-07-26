@@ -6,6 +6,7 @@ from api.chatgpt import ChatGPT
 
 import os
 
+
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 working_status = os.getenv("DEFALUT_TALKING", default = "true").lower() == "true"
@@ -73,6 +74,8 @@ def callback():
 ## handle_message() 函數會檢查 event 的類型是否為 TextMessage，如果是的話，就會執行 handle_message() 函數中的程式碼
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    ## global 是 python 的語法，會將變數註冊到 global scope 中
+    ## working_status 是一個 global 變數，預設為 False，用來管理是否要啟動 chatbot
     global working_status
     
     ## 如果不是文字訊息，就不處理，回傳空值
@@ -102,6 +105,14 @@ def handle_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="感謝您的使用，若需要我的服務，請跟我說 「啟動」 謝謝~"))
+        return
+    
+    ## if message is "目前用量" then reply with the usage
+    if event.message.text == "目前用量":
+        working_status = False
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="目前 OpenAI API 使用量: " + str(chatgpt.get_usage)))
         return
     
     if working_status:

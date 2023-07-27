@@ -1,13 +1,16 @@
+##import sys
+##sys.path.append('/Users/JustinHsu/ChatGpt-LineBot/')
+
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage   ##FlexSendMessage
-## 下列這段程式碼是引入我們自己寫的 chatgpt.py 檔案，並且實體化 ChatGPT 這個 class
-## 其中 api.chatgpt 是指 api 資料夾中的 chatgpt.py 檔案
-from api.chatgpt import ChatGPT
-
+from chatgpt import ChatGPT
 import os
 
+## import python-dotenv module to read .env file
+from dotenv import load_dotenv
+load_dotenv()
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
@@ -22,10 +25,7 @@ def home():
     return 'Hello, ChatGpt-LineBot!'
 
 @app.route("/webhook", methods=['POST'])
-## 當 LINE 的服務器，呼叫 callback()時
-## 會將 request 的 body 轉成文字，並且傳入 callback() 中
-## 這個 body 是 LINE 的 webhook，會包含 LINE 的使用者傳送的訊息
-## 這個 body 的格式是 JSON，所以我們需要使用 JSON 的格式來解析
+## 當 LINE 的服務器，呼叫 callback()時，會將 request 的 body 轉成文字，並且傳入 callback() 中
 ## 這個 body 的格式如下
 ## {
 ##   "events": [
@@ -47,26 +47,20 @@ def home():
 ## }
 
 def callback():
-    # get X-Line-Signature header value
+    ## wihtout LINE signature, just use this line for testing locally
+    ## print("BODY" + '\n' + str(request.get_data(as_text=True)))
+
+    ### Remove marks this paragraph before deploy to cloud service ###
+    ##"""
     signature = request.headers['X-Line-Signature']
-    # get request body as text
-    ## request 是 flask 的物件，get_data() 是一個 request 物件裡的 method，as_text=True 是將 request 的 body 轉成文字
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
-    # handle webhook body
-    ## line_handler.handle() 是呼叫 WebhookHandler 物件的 handle() method, 這個 method 會將 body 和 signature 傳入
-    ## 這個 method 會檢查 signature 是否正確，如果正確就會執行 handle() method 中的程式碼
-    ## 如果 signature 不正確，就會回傳 400 的錯誤訊息
-    ## 所以， LINE Server 會調用 callback() 函數，把 request 的物件傳入給 web app
-    ## web app 的程式碼裡有引入 LINE 開發的 module，名字為 linebot，這個 module 裡有一個 WebhookHandler 的 class
-    ## 當 web app 收到 event()時，會呼叫 WebhookHandler 的 handle() method，並且將 request 的物件傳入
-    ## 並且將 request 的物件傳入，這個 method 會檢查 signature 是否正確，如果正確就會執行 handle() method 中的程式碼
-    ## 如果 signature 不正確，就會回傳 400 的錯誤訊息，web app 不會對這個 request 做任何處理
-    
+
     try:
         line_handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
+    ##"""
     
     return 'OK'
 

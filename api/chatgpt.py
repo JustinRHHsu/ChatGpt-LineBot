@@ -1,5 +1,5 @@
 ## api.prompt 是
-from api.prompt import Prompt
+from prompt import Prompt
 
 import os
 import openai

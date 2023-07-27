@@ -2,6 +2,8 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage   ##FlexSendMessage
+## 下列這段程式碼是引入我們自己寫的 chatgpt.py 檔案，並且實體化 ChatGPT 這個 class
+## 其中 api.chatgpt 是指 api 資料夾中的 chatgpt.py 檔案
 from api.chatgpt import ChatGPT
 
 import os
@@ -60,10 +62,12 @@ def callback():
     ## 當 web app 收到 event()時，會呼叫 WebhookHandler 的 handle() method，並且將 request 的物件傳入
     ## 並且將 request 的物件傳入，這個 method 會檢查 signature 是否正確，如果正確就會執行 handle() method 中的程式碼
     ## 如果 signature 不正確，就會回傳 400 的錯誤訊息，web app 不會對這個 request 做任何處理
+    
     try:
         line_handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
+    
     return 'OK'
 
 
@@ -130,7 +134,7 @@ def handle_message(event):
         print("ChatGPT API 回應(取代部份字串)：" + reply_msg)
         chatgpt.add_msg(f"AI:{reply_msg}\n")
         print("在 Prompt 再加入這一次 AI 回應的消息，完整訊息為：" + "\n" + chatgpt.prompt.generate_prompt())
-        
+
         ## 回傳給使用者的訊息
         line_bot_api.reply_message(
             event.reply_token,

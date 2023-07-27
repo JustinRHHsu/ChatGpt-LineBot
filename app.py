@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/JustinHsu/ChatGpt-LineBot/api')
+sys.path.append('/Users/JustinHsu/ChatGpt-LineBot/')
 
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler

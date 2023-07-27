@@ -51,10 +51,10 @@ def home():
 
 def callback():
     ## wihtout LINE signature, just use this line for testing locally
-    ##print("BODY = " + '\n' + str(request.get_data(as_text=True)))
+    #print("BODY = " + '\n' + str(request.get_data(as_text=True)))
 
     ### Remove marks this paragraph before deploy to cloud service ###
-    ##"""
+    
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
@@ -63,7 +63,7 @@ def callback():
         line_handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
-    ##"""
+   
     return 'OK'
 
 

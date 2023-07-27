@@ -9,8 +9,10 @@ from chatgpt import ChatGPT
 import os
 
 ## import python-dotenv module to read .env file
+"""
 from dotenv import load_dotenv
 load_dotenv()
+"""
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))

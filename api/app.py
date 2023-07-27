@@ -1,5 +1,5 @@
-##import sys
-##sys.path.append('/Users/JustinHsu/ChatGpt-LineBot/')
+import sys
+sys.path.append('/Users/JustinHsu/ChatGpt-LineBot/api')
 
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
@@ -9,10 +9,11 @@ from chatgpt import ChatGPT
 import os
 
 ## import python-dotenv module to read .env file
-"""
 from dotenv import load_dotenv
+#dotenv_path = os.path.join(os.path.dirname(__file__), '/config/.env')
+#print(dotenv_path)
+#load_dotenv(dotenv_path)
 load_dotenv()
-"""
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
@@ -50,7 +51,7 @@ def home():
 
 def callback():
     ## wihtout LINE signature, just use this line for testing locally
-    ##print("BODY" + '\n' + str(request.get_data(as_text=True)))
+    ##print("BODY = " + '\n' + str(request.get_data(as_text=True)))
 
     ### Remove marks this paragraph before deploy to cloud service ###
     ##"""
@@ -63,15 +64,17 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     ##"""
-    
     return 'OK'
 
 
 ## @ 是 flask 的語法，會將函數註冊到 event handler 中
 ## event handler 是一個 event 的處理器，當 LINE Server 收到 event 時，會呼叫 event handler
+## 會由誰來呼叫 event handler 呢？是由 callback() 呼叫的
 ## event handler 會根據 event 的類型，來決定要執行哪一個函數
 ## 在下面的程式碼中，我們註冊了一個 MessageEvent 的 event handler，當 LINE Server 收到 MessageEvent 時，會呼叫 handle_message() 函數
 ## handle_message() 函數會檢查 event 的類型是否為 TextMessage，如果是的話，就會執行 handle_message() 函數中的程式碼
+## line_handler.add() 會在什麼時候、怎麼被呼叫呢？
+## 當 LINE Server 收到 event 時，會呼叫 callback()，callback() 會呼叫 line_handler.handle()，line_handler.handle() 會呼叫 line_handler.add()
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     ## global 是 python 的語法，會將變數註冊到 global scope 中
@@ -95,6 +98,7 @@ def handle_message(event):
     if event.message.text == "啟動":
         ## working_status 是一個 global 變數，預設為 False，用來管理是否要啟動 chatbot
         working_status = True
+        print("user_message = 啟動")
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="我是時下流行的AI智能，目前可以為您服務囉，歡迎來跟我互動~"))
@@ -102,6 +106,7 @@ def handle_message(event):
 
     if event.message.text == "安靜":
         working_status = False
+        print("user_message = 安靜")
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="感謝您的使用，若需要我的服務，請跟我說 「啟動」 謝謝~"))
@@ -111,6 +116,7 @@ def handle_message(event):
     ## if message is "目前用量" then reply with the usage
     if event.message.text == "目前用量":
         working_status = False
+        print("user_message = 目前用量")
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="目前 OpenAI API 使用量: " + str(chatgpt.get_usage)))
@@ -126,16 +132,18 @@ def handle_message(event):
 
         ## .replace() 是將字串中的某個字串取代成另一個字串
         ## 這裡是將回應的訊息中的 AI: 取代成空字串，並且限制取代的次數為 1
+        print("AI 回覆：" + chatgpt.get_response())
         reply_msg = chatgpt.get_response().replace("AI:", "", 1)
-        print("ChatGPT API 回應(取代部份字串)：" + reply_msg)
+        print("AP 回覆(取代文字後)：" + reply_msg)
         chatgpt.add_msg(f"AI:{reply_msg}\n")
-        print("在 Prompt 再加入這一次 AI 回應的消息，完整訊息為：" + "\n" + chatgpt.prompt.generate_prompt())
+        print("完整訊息為：" + "\n" + chatgpt.prompt.generate_prompt())
 
         ## 回傳給使用者的訊息
+        ##"""
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=reply_msg))
-
+        ##"""
 
 if __name__ == "__main__":
     app.run()

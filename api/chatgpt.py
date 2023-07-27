@@ -1,4 +1,3 @@
-## api.prompt 是
 from prompt import Prompt
 
 import os

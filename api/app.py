@@ -48,7 +48,7 @@ def home():
 
 def callback():
     ## wihtout LINE signature, just use this line for testing locally
-    ## print("BODY" + '\n' + str(request.get_data(as_text=True)))
+    ##print("BODY" + '\n' + str(request.get_data(as_text=True)))
 
     ### Remove marks this paragraph before deploy to cloud service ###
     ##"""

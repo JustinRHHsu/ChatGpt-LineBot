@@ -1,6 +1,3 @@
-import sys
-sys.path.append('/Users/JustinHsu/ChatGpt-LineBot/')
-
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -8,12 +5,12 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage   ##FlexSe
 from chatgpt import ChatGPT
 import os
 
-## import python-dotenv module to read .env file
+## import python-dotenv module to read .env filels
 from dotenv import load_dotenv
-#dotenv_path = os.path.join(os.path.dirname(__file__), '/config/.env')
-#print(dotenv_path)
-#load_dotenv(dotenv_path)
-load_dotenv()
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config", ".env")
+print(".env_path = " + str(dotenv_path))
+load_dotenv(dotenv_path)
+
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
